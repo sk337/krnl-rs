@@ -1,0 +1,16 @@
+[package]
+name = "krnl-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+x86_64 = "0.15.1"
+
+[profile.dev]
+panic = "abort"  # No backtrace for panics
+
+[profile.release]
+panic = "abort"  # No backtrace for panics
+
+[target.'cfg(target_os = "none")']
+runner = "bootimage runner"
