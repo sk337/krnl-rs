@@ -1,4 +1,5 @@
-export CARGO_MANIFEST_DIR=$PWD
-export PATH=$PWD/target/debug/build/bootloader-abbe6ca3e0d61ff2/out/bin:$PATH
+./build.sh
+qemu-system-x86_64 -cdrom krnl-rs.iso
+# qemu-system-x86_64 -drive format=raw,file=target/x86_64/debug/bootimage-krnl-rs.bin
 
-bootimage runner target/x86_64/release/krnl-rs
+# qemu-system-x86_64 -drive format=raw,file=target/x86_64/debug/krnl-rs
