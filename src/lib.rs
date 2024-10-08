@@ -2,6 +2,7 @@
 #![no_main] // disable all Rust-level entry points
 
 // use core::arch::asm;
+mod io;
 mod vga_buffer;
 
 use core::panic::PanicInfo;
@@ -9,7 +10,7 @@ use vga_buffer::{Buffer, Color, ColorCode, Status, Writer};
 
 static HELLO: &str = "Hello World!";
 
-/// This function is called on panic.
+// This function is called on panic.
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     // let message = "Kernel panic!".;
@@ -27,6 +28,7 @@ fn panic(_info: &PanicInfo) -> ! {
 pub extern "C" fn kernel_main() -> ! {
     let mut writer = Writer {
         column_position: 0,
+        row_position: 0,
         color_code: ColorCode::new(Color::White, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
     };

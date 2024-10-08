@@ -1,5 +1,6 @@
 [unstable]
 build-std = ["core", "compiler_builtins", "alloc"]
+build-std-features = ["compiler-builtins-mem"]
 
 [build]
 # target = "/home/sk337/krnl-rs/i686.json"

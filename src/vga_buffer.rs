@@ -1,3 +1,5 @@
+use super::io;
+
 #[allow(dead_code)]
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
@@ -55,6 +57,7 @@ pub struct Buffer {
 
 pub struct Writer {
     pub column_position: usize,
+    pub row_position: usize,
     pub color_code: ColorCode,
     pub buffer: &'static mut Buffer,
 }
@@ -68,11 +71,10 @@ impl Writer {
                     self.new_line();
                 }
 
-                let row = BUFFER_HEIGHT - 1;
                 let col = self.column_position;
 
                 let color_code = self.color_code;
-                self.buffer.chars[row][col] = ScreenChar {
+                self.buffer.chars[self.row_position][col] = ScreenChar {
                     ascii_character: byte,
                     color_code,
                 };
@@ -96,16 +98,16 @@ impl Writer {
         // shift all lines up if on the last line
         // otherwise, move to the next line
         // and reset the column position
-        if BUFFER_HEIGHT - 1 == self.column_position {
+        if BUFFER_HEIGHT - 1 == self.row_position {
             for row in 1..BUFFER_HEIGHT {
                 for col in 0..BUFFER_WIDTH {
                     let character = self.buffer.chars[row][col];
                     self.buffer.chars[row - 1][col] = character;
                 }
             }
-            self.column_position = BUFFER_HEIGHT - 1;
-            self.clear_row(self.column_position);
+            self.clear_row(self.row_position);
         } else {
+            self.row_position += 1;
             self.column_position = 0;
         }
     }
@@ -159,5 +161,18 @@ impl Writer {
         self.set_color(Color::Black, Color::White);
         self.write_string("] ");
         self.write_string(message);
+        self.new_line();
+        // self.update_cursor();
+    }
+
+    pub fn set_cursor(&mut self, row: usize, column: usize) {
+        io::outb(0x3D4, 0x0F);
+        io::outb(0x3D5, (row * BUFFER_WIDTH + column) as u8);
+        io::outb(0x3D4, 0x0E);
+        io::outb(0x3D5, ((row * BUFFER_WIDTH + column) >> 8) as u8);
+    }
+
+    pub fn update_cursor(&mut self) {
+        self.set_cursor(self.row_position, self.column_position);
     }
 }

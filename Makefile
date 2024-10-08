@@ -30,7 +30,7 @@ main.iso: main.elf
 	$(MKISO) -o $@ $(ISO_DIR)
 
 clean:
-	rm -f *.o *.elf *.d
+	rm -f *.o *.elf *.d *.iso
 
 run: main.elf
 	$(QEMU) -kernel $<
