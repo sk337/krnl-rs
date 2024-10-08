@@ -116,5 +116,3 @@ pub fn outl_p(port: u16, data: u32) {
     outl(port, data);
     io_delay();
 }
-
-// Delay function to simulate I/O timing (to be implemented as needed)
