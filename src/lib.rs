@@ -34,6 +34,9 @@ pub extern "C" fn kernel_main() -> ! {
 
     writer.clear_screen();
 
+    writer.set_color(Color::Black, Color::Pink);
+    writer.println("HUMMUS :3");
+
     writer.print_status(Status::OK, "Kernel loaded successfully!");
     writer.println(HELLO);
 
