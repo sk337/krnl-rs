@@ -21,11 +21,19 @@ pub enum Color {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum Status {
+    OK = 0,
+    ERROR = 1,
+    INFO = 2,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)]
-struct ColorCode(u8);
+pub struct ColorCode(u8);
 
 impl ColorCode {
-    fn new(foreground: Color, background: Color) -> ColorCode {
+    pub fn new(foreground: Color, background: Color) -> ColorCode {
         ColorCode((background as u8) << 4 | (foreground as u8))
     }
 }
@@ -41,14 +49,14 @@ const BUFFER_HEIGHT: usize = 25;
 const BUFFER_WIDTH: usize = 80;
 
 #[repr(transparent)]
-struct Buffer {
+pub struct Buffer {
     chars: [[ScreenChar; BUFFER_WIDTH]; BUFFER_HEIGHT],
 }
 
 pub struct Writer {
-    column_position: usize,
-    color_code: ColorCode,
-    buffer: &'static mut Buffer,
+    pub column_position: usize,
+    pub color_code: ColorCode,
+    pub buffer: &'static mut Buffer,
 }
 
 impl Writer {
@@ -84,17 +92,67 @@ impl Writer {
         }
     }
 
-    fn new_line(&mut self) {}
-}
+    fn new_line(&mut self) {
+        // shift all lines up if on the last line
+        // otherwise, move to the next line
+        // and reset the column position
+        if BUFFER_HEIGHT - 1 == self.column_position {
+            for row in 1..BUFFER_HEIGHT {
+                for col in 0..BUFFER_WIDTH {
+                    let character = self.buffer.chars[row][col];
+                    self.buffer.chars[row - 1][col] = character;
+                }
+            }
+            self.column_position = BUFFER_HEIGHT - 1;
+            self.clear_row(self.column_position);
+        } else {
+            self.column_position = 0;
+        }
+    }
 
-pub fn print_something() {
-    let mut writer = Writer {
-        column_position: 0,
-        color_code: ColorCode::new(Color::Yellow, Color::Black),
-        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-    };
+    pub fn set_color(&mut self, bg: Color, fg: Color) {
+        self.color_code = ColorCode::new(fg, bg);
+    }
 
-    writer.write_byte(b'H');
-    writer.write_string("ello ");
-    writer.write_string("Wörld!");
+    pub fn clear_row(&mut self, row: usize) {
+        for col in 0..BUFFER_WIDTH {
+            self.buffer.chars[row][col] = ScreenChar {
+                ascii_character: b' ',
+                color_code: self.color_code,
+            };
+        }
+    }
+
+    pub fn clear_screen(&mut self) {
+        for row in 0..BUFFER_HEIGHT {
+            for col in 0..BUFFER_WIDTH {
+                self.buffer.chars[row][col] = ScreenChar {
+                    ascii_character: b' ',
+                    color_code: self.color_code,
+                };
+            }
+        }
+    }
+
+    pub fn print_status(&mut self, status: Status, message: &str) {
+        self.set_color(Color::Black, Color::White);
+        self.write_string("[");
+        match status {
+            Status::OK => {
+                self.set_color(Color::Black, Color::Green);
+                self.write_string("OK");
+            }
+            Status::ERROR => {
+                self.set_color(Color::Black, Color::Red);
+                self.write_string("ERROR");
+            }
+            Status::INFO => {
+                self.set_color(Color::Black, Color::Blue);
+                self.write_string("INFO");
+            }
+        }
+        self.set_color(Color::Black, Color::White);
+        self.write_string("] ");
+        self.write_string(message);
+    }
 }
