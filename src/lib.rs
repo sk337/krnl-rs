@@ -5,15 +5,15 @@
 mod vga_buffer;
 
 use core::panic::PanicInfo;
-use vga_buffer::{Buffer, Color, ColorCode, Writer};
+use vga_buffer::{Buffer, Color, ColorCode, Status, Writer};
 
-static HELLO: &[u8] = b"Hello World!";
+static HELLO: &str = "Hello World!";
 
 /// This function is called on panic.
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     // let message = "Kernel panic!".;
-    // message.co
+    // message.concat
     // let mut writer = Writer {
     //     column_position: 0,
     //     color_code: ColorCode::new(Color::White, Color::Black),
@@ -32,6 +32,9 @@ pub extern "C" fn kernel_main() -> ! {
     };
 
     writer.clear_screen();
+
+    writer.print_status(Status::OK, "Kernel loaded successfully!");
+    writer.println(HELLO);
 
     loop {}
 }

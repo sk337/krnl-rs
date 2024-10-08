@@ -134,6 +134,11 @@ impl Writer {
         }
     }
 
+    pub fn println(&mut self, message: &str) {
+        self.write_string(message);
+        self.new_line();
+    }
+
     pub fn print_status(&mut self, status: Status, message: &str) {
         self.set_color(Color::Black, Color::White);
         self.write_string("[");

@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["staticlib"]
 
 [profile.dev]
 panic = "abort" # No backtrace for panics

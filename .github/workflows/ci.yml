@@ -29,5 +29,11 @@ jobs:
       - name: add target i686-unknown-linux-gnu
         run: rustup target add i686-unknown-linux-gnu
 
-      - name: Build project
-        run: make
+      - name: Build ISO
+        run: make main.iso
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: main.iso
+          path: main.iso

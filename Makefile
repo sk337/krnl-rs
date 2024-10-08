@@ -19,7 +19,7 @@ all: main.iso
 
 main.o: $(wildcard src/*.rs) .cargo/config.toml Cargo.toml
 	cargo build
-	cp target/i686-unknown-linux-gnu/debug/libkrnl_rs.so main.o
+	cp target/i686-unknown-linux-gnu/debug/libkrnl_rs.a main.o
 
 main.elf: $(OBJ)
 	ld $(LD_FLAGS) -o $@ $(OBJ)
