@@ -1,0 +1,33 @@
+name: Build ISO CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential nasm xorriso grub2-common grub-common mtools gcc-multilib g++-multilib libc6-dev-i386
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+
+      - name: add target i686-unknown-linux-gnu
+        run: rustup target add i686-unknown-linux-gnu
+
+      - name: Build project
+        run: make
