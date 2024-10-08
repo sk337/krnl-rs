@@ -4,6 +4,7 @@
 mod io;
 mod vga_buffer;
 
+use core::arch::asm;
 use core::panic::PanicInfo;
 use vga_buffer::{Buffer, Color, ColorCode, Status, Writer};
 
@@ -38,7 +39,12 @@ pub extern "C" fn kernel_main() -> ! {
     writer.println("HUMMUS :3");
 
     writer.print_status(Status::OK, "Kernel loaded successfully!");
-    writer.println(HELLO);
+    writer.print_status(Status::INFO, "Did you know hummus is yummy?");
+    writer.print_status(Status::ERROR, "I'm out of hummus :(");
 
-    loop {}
+    loop {
+        unsafe {
+            asm!("hlt");
+        }
+    }
 }

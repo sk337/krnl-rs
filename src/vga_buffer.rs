@@ -150,11 +150,11 @@ impl Writer {
                 self.write_string("OK");
             }
             Status::ERROR => {
-                self.set_color(Color::Black, Color::Red);
+                self.set_color(Color::Black, Color::LightRed);
                 self.write_string("ERROR");
             }
             Status::INFO => {
-                self.set_color(Color::Black, Color::Blue);
+                self.set_color(Color::Black, Color::LightBlue);
                 self.write_string("INFO");
             }
         }
