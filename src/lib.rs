@@ -8,20 +8,39 @@ use core::arch::asm;
 use core::panic::PanicInfo;
 use vga_buffer::{Buffer, Color, ColorCode, Status, Writer};
 
-static HELLO: &str = "Hello World!";
-
 // This function is called on panic.
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
-    // let message = "Kernel panic!".;
-    // message.concat
-    // let mut writer = Writer {
-    //     column_position: 0,
-    //     color_code: ColorCode::new(Color::White, Color::Black),
-    //     buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-    // };
+    let mut writer = Writer {
+        column_position: 0,
+        row_position: 0,
+        color_code: ColorCode::new(Color::White, Color::Black),
+        buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+    };
 
-    loop {}
+    writer.clear_screen();
+    writer.print_status(Status::ERROR, "Kernel panic!");
+    writer.println("----PANIC----");
+    writer.write_string("Error: ");
+    writer.write_string(_info.message().as_str().unwrap_or_else(|| "no message"));
+    writer.new_line();
+    if _info.location().is_some() {
+        writer.write_string("Location: ");
+        writer.new_line();
+        writer.write_string("  ");
+        writer.write_string(_info.location().unwrap().file());
+        writer.write_string("@");
+        writer.write_number(_info.location().unwrap().line() as u64);
+        writer.write_string(":");
+        writer.write_number(_info.location().unwrap().column() as u64);
+        writer.new_line();
+    };
+
+    loop {
+        unsafe {
+            asm!("hlt");
+        }
+    }
 }
 
 #[no_mangle]
