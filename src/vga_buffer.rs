@@ -1,6 +1,5 @@
 use super::io;
-
-#[allow(dead_code)]
+use super::traits::ToString;
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum Color {
@@ -94,18 +93,8 @@ impl Writer {
         }
     }
 
-    pub fn write_number(&mut self, n: u64) {
-        let mut n = n;
-        let mut buffer = [0; 20];
-        let mut i = 0;
-        while n > 0 {
-            buffer[i] = (n % 10) as u8 + 0x30;
-            n /= 10;
-            i += 1;
-        }
-        for j in (0..i).rev() {
-            self.write_byte(buffer[j]);
-        }
+    pub fn write_number<T: ToString>(&mut self, n: T) {
+        self.write_string(n.to_string().as_str());
     }
 
     pub fn new_line(&mut self) {
@@ -179,7 +168,7 @@ impl Writer {
         // self.update_cursor();
     }
 
-    #[allow(dead_code)]
+    #[expect(dead_code)]
     pub fn set_cursor(&mut self, row: usize, column: usize) {
         io::outb(0x3D4, 0x0F);
         io::outb(0x3D5, (row * BUFFER_WIDTH + column) as u8);
@@ -187,7 +176,7 @@ impl Writer {
         io::outb(0x3D5, ((row * BUFFER_WIDTH + column) >> 8) as u8);
     }
 
-    #[allow(dead_code)]
+    #[expect(dead_code)]
     pub fn update_cursor(&mut self) {
         self.set_cursor(self.row_position, self.column_position);
     }

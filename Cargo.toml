@@ -3,7 +3,9 @@ name = "krnl-rs"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
+# [dependencies.core]
+# version = "1.39"
+# features = ["fmt", "string",]
 
 [lib]
 crate-type = ["staticlib"]

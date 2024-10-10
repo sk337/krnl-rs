@@ -1,3 +1,4 @@
+#![expect(dead_code)]
 use core::arch::asm;
 
 pub static PIC0_DATA: u16 = 0x20; // PIC0_DATA
