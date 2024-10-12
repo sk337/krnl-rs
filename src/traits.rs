@@ -1,3 +1,4 @@
+#![no_std]
 use super::prelude::*;
 
 pub trait ToString {

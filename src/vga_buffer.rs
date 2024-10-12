@@ -1,3 +1,4 @@
+#![no_std]
 use super::io;
 use super::traits::ToString;
 #[derive(Clone, Copy, PartialEq, Eq)]

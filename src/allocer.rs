@@ -1,3 +1,4 @@
+#![no_std]
 use alloc::alloc::{GlobalAlloc, Layout};
 use core::ptr::null_mut;
 use core::sync::atomic::{AtomicUsize, Ordering};
