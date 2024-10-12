@@ -5,6 +5,7 @@ ASFLAGS = -f elf32 -g
 CXX := $(shell if command -v clang++ > /dev/null; then echo clang++; else echo g++; fi)
 MKISO := $(shell if command -v grub2-mkrescue > /dev/null; then echo grub2-mkrescue; else echo grub-mkrescue; fi)
 QEMU = qemu-system-i386
+QEMU_FLAGS = -m 256M
 LINKER_ARCH = elf_i386
 ENTRY = bootloader.asm
 LINKER_SCRIPT = linker.ld
@@ -34,7 +35,7 @@ clean:
 	rm -f *.o *.elf *.d *.iso
 
 run: main.elf
-	$(QEMU) -kernel $<
+	$(QEMU) $(QEMU_FALGS) -kernel $<
 
 run-iso: main.iso
-	$(QEMU) -cdrom $<
+	$(QEMU) $(QEMU_FALGS) -cdrom $<
