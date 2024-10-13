@@ -11,9 +11,9 @@ pub fn inb(port: u16) -> u8 {
     let value: u8;
     unsafe {
         asm!(
-            "inb dx, al",    // Direct register usage
-            in("dx") port,
-            out("al") value    // Output goes to `al`
+            "inb {}, {}",
+            out(reg_byte) value, // Output value will be stored in AL
+            in(reg) port,   // DX will hold the port number
         );
     }
     value
@@ -22,9 +22,9 @@ pub fn inb(port: u16) -> u8 {
 pub fn outb(port: u16, data: u8) {
     unsafe {
         asm!(
-            "outb al, dx",   // Direct register usage
-            in("al") data,      // Input data from `al`
-            in("dx") port
+            "outb {}, {1:x}",
+            in(reg_byte) data, // AL will be the data to output
+            in(reg) port, // DX will hold the port number
         );
     }
 }
@@ -33,9 +33,9 @@ pub fn inw(port: u16) -> u16 {
     let value: u16;
     unsafe {
         asm!(
-            "inw dx, ax",    // Direct register usage
-            in("dx") port,
-            out("ax") value    // Output goes to `ax`
+            "inw {0:x}, {1:x}",
+            out(reg) value, // Output value will be stored in AX
+            in(reg) port,   // DX will hold the port number
         );
     }
     value
@@ -44,9 +44,9 @@ pub fn inw(port: u16) -> u16 {
 pub fn outw(port: u16, data: u16) {
     unsafe {
         asm!(
-            "outw ax, dx",   // Direct register usage
-            in("dx") port,
-            in("ax") data      // Input data from `ax`
+            "outw {0:x}, {1:x}",
+            in(reg) data,  // AX will be the data to output
+            in(reg) port,  // DX will hold the port number
         );
     }
 }
@@ -55,9 +55,9 @@ pub fn inl(port: u16) -> u32 {
     let value: u32;
     unsafe {
         asm!(
-            "inl dx, eax",   // Direct register usage
-            in("dx") port,
-            out("eax") value   // Output goes to `eax`
+            "inl {}, {1:x}",
+            out(reg) value, // Output value will be stored in EAX
+            in(reg) port,    // DX will hold the port number
         );
     }
     value
@@ -66,9 +66,9 @@ pub fn inl(port: u16) -> u32 {
 pub fn outl(port: u16, data: u32) {
     unsafe {
         asm!(
-            "outl eax, dx",  // Direct register usage
-            in("dx") port,
-            in("eax") data     // Input data from `eax`
+            "outl {}, {1:x}",
+            in(reg) data,  // EAX will be the data to output
+            in(reg) port,   // DX will hold the port number
         );
     }
 }

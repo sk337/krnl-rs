@@ -29,6 +29,7 @@ pub enum Status {
     OK = 0,
     ERROR = 1,
     INFO = 2,
+    DEBUG = 3,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -169,12 +170,16 @@ impl Writer {
                 self.set_color(Color::Black, Color::LightBlue);
                 self.write_string("INFO");
             }
+            Status::DEBUG => {
+                self.set_color(Color::Black, Color::LightGray);
+                self.write_string("DEBUG");
+            }
         }
         self.set_color(Color::Black, Color::White);
         self.write_string("] ");
         self.write_string(message);
         self.new_line();
-        // self.update_cursor();
+        self.update_cursor();
     }
 
     #[expect(dead_code)]

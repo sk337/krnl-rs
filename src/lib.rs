@@ -61,11 +61,14 @@ pub extern "C" fn kernel_main() -> ! {
     writer.clear_screen();
 
     writer.set_color(Color::Black, Color::Pink);
-    writer.println("HUMMUS :3");
+    writer.println("HUMMUS OS :3");
+    writer.set_color(Color::Black, Color::DarkGray);
+    writer.println("Harder to install than Arch Linux! ;)");
 
     writer.print_status(Status::OK, "Kernel loaded successfully!");
     writer.print_status(Status::INFO, "Did you know hummus is yummy?");
     writer.print_status(Status::ERROR, "I'm out of hummus :(");
+    writer.print_status(Status::DEBUG, "I foundz it! :D");
 
     let str = String::from("Hello, world!");
 
