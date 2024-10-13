@@ -3,8 +3,8 @@
 
 # Config Variables
 
-ARCH = x64
-# ARCH = x86
+# ARCH = x64
+ARCH = x86
 # TODO: Add support for ARM
 # MODE = release
 MODE = debug
