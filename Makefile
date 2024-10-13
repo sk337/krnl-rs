@@ -74,8 +74,11 @@ main.iso: main.elf $(EFI_BOOT)
 	cp ./$(EFI_BOOT) $(ISO_DIR)/EFI/BOOT/$(EFI_BOOT)
 	$(MKISO) -o $@ $(ISO_DIR)
 
-clean:
-	rm -f *.o *.elf *.d *.iso
+clean: semi-clean
+	rm -rf *.iso iso/boot/*.elf iso/EFI
+
+semi-clean:
+	rm -f *.o *.elf *.d *.EFI
 
 run: main.elf
 	$(QEMU) $(QEMU_FLAGS) -kernel $<
