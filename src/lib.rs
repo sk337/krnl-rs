@@ -9,6 +9,7 @@ mod vga_buffer;
 use allocer::BumpAllocator; // Import the bump allocator
 use core::arch::asm;
 use core::panic::PanicInfo;
+use prelude::*; // Import the prelude
 use vga_buffer::{Buffer, Color, ColorCode, Status, Writer};
 
 #[global_allocator]
@@ -35,16 +36,16 @@ fn panic(_info: &PanicInfo) -> ! {
         writer.write_string("Location: ");
         writer.write_string(loc.file());
         writer.write_string(":");
-        writer.write_number(loc.line() as u64);
+        writer.write_number(loc.line().to_string());
         writer.write_string(":");
-        writer.write_number(loc.column() as u64);
+        writer.write_number(loc.column().to_string());
         writer.new_line();
     });
 
     loop {
-        // unsafe {
-        //     asm!("hlt");
-        // }
+        unsafe {
+            asm!("hlt");
+        }
     }
 }
 
@@ -66,7 +67,11 @@ pub extern "C" fn kernel_main() -> ! {
     writer.print_status(Status::INFO, "Did you know hummus is yummy?");
     writer.print_status(Status::ERROR, "I'm out of hummus :(");
 
-    panic!("Kernel panic!");
+    let str = String::from("Hello, world!");
+
+    writer.println(&str.as_str());
+
+    // panic!("Test Panic");
 
     loop {
         unsafe {

@@ -1,6 +1,7 @@
-#![no_std]
 use super::io;
-use super::traits::ToString;
+use super::prelude::*;
+use super::traits::*;
+use alloc::string::ToString;
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum Color {
@@ -62,6 +63,10 @@ pub struct Writer {
     pub buffer: &'static mut Buffer,
 }
 
+fn char_to_ascii(c: char) -> u8 {
+    c as u8
+}
+
 impl Writer {
     pub fn write_byte(&mut self, byte: u8) {
         match byte {
@@ -84,10 +89,13 @@ impl Writer {
     }
 
     pub fn write_string(&mut self, s: &str) {
-        for byte in s.bytes() {
+        for byte in s.chars() {
+            let byte = char_to_ascii(byte);
             match byte {
                 // printable ASCII byte or newline
-                0x20..=0x7e | b'\n' => self.write_byte(byte),
+                0x20..=0x7e | b'\n' => {
+                    self.write_byte(byte);
+                }
                 // not part of printable ASCII range
                 _ => self.write_byte(0xfe),
             }
@@ -95,7 +103,7 @@ impl Writer {
     }
 
     pub fn write_number<T: ToString>(&mut self, n: T) {
-        self.write_string(n.to_string().as_str());
+        self.write_string(&n.to_string().as_str());
     }
 
     pub fn new_line(&mut self) {

@@ -1,4 +1,3 @@
-#![no_std]
 #![expect(dead_code)]
 use core::arch::asm;
 

@@ -3,4 +3,5 @@
 *.o
 *.d
 *.elf
+*.EFI
 Cargo.lock
