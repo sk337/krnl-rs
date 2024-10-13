@@ -18,7 +18,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential nasm xorriso grub2-common grub-common mtools gcc-multilib g++-multilib libc6-dev-i386
+          sudo apt-get install -y build-essential nasm xorriso grub2-common grub-common mtools gcc-multilib g++-multilib libc6-dev-i386 grub2-efi-x64 grub2-efi-x64-modules grub-efi-ia32 grub-efi-ia32-modules
 
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
