@@ -40,6 +40,38 @@ impl ColorCode {
     pub fn new(foreground: Color, background: Color) -> ColorCode {
         ColorCode((background as u8) << 4 | (foreground as u8))
     }
+
+    pub fn get_bg(&self) -> Color {
+        Color::from((self.0 & 0xF0) >> 4)
+    }
+
+    pub fn get_fg(&self) -> Color {
+        Color::from(self.0 & 0x0F)
+    }
+}
+
+impl From<u8> for Color {
+    fn from(cc: u8) -> Self {
+        match cc {
+            0 => Color::Black,
+            1 => Color::Blue,
+            2 => Color::Green,
+            3 => Color::Cyan,
+            4 => Color::Red,
+            5 => Color::Magenta,
+            6 => Color::Brown,
+            7 => Color::LightGray,
+            8 => Color::DarkGray,
+            9 => Color::LightBlue,
+            10 => Color::LightGreen,
+            11 => Color::LightCyan,
+            12 => Color::LightRed,
+            13 => Color::Pink,
+            14 => Color::Yellow,
+            15 => Color::White,
+            _ => Color::Black,
+        }
+    }
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -90,8 +122,8 @@ impl Writer {
     }
 
     pub fn write_string(&mut self, s: &str) {
-        for byte in s.chars() {
-            let byte = char_to_ascii(byte);
+        for byte in s.bytes() {
+            // let byte = char_to_ascii(byte);
             match byte {
                 // printable ASCII byte or newline
                 0x20..=0x7e | b'\n' => {
@@ -129,6 +161,14 @@ impl Writer {
         self.color_code = ColorCode::new(fg, bg);
     }
 
+    pub fn set_fg(&mut self, fg: Color) {
+        self.color_code = ColorCode::new(fg, Color::from(self.color_code.0 >> 4));
+    }
+
+    pub fn set_bg(&mut self, bg: Color) {
+        self.color_code = ColorCode::new(Color::from(self.color_code.0 & 0x0F), bg);
+    }
+
     pub fn clear_row(&mut self, row: usize) {
         for col in 0..BUFFER_WIDTH {
             self.buffer.chars[row][col] = ScreenChar {
@@ -155,31 +195,31 @@ impl Writer {
     }
 
     pub fn print_status(&mut self, status: Status, message: &str) {
-        self.set_color(Color::Black, Color::White);
+        let old_fg = self.color_code.get_fg().clone();
         self.write_string("[");
         match status {
             Status::OK => {
-                self.set_color(Color::Black, Color::Green);
+                self.set_fg(Color::Green);
                 self.write_string("OK");
             }
             Status::ERROR => {
-                self.set_color(Color::Black, Color::LightRed);
+                self.set_fg(Color::LightRed);
                 self.write_string("ERROR");
             }
             Status::INFO => {
-                self.set_color(Color::Black, Color::LightBlue);
+                self.set_fg(Color::LightBlue);
                 self.write_string("INFO");
             }
             Status::DEBUG => {
-                self.set_color(Color::Black, Color::LightGray);
+                self.set_fg(Color::LightGray);
                 self.write_string("DEBUG");
             }
         }
-        self.set_color(Color::Black, Color::White);
+        self.set_fg(old_fg);
         self.write_string("] ");
         self.write_string(message);
         self.new_line();
-        self.update_cursor();
+        // self.update_cursor();
     }
 
     #[expect(dead_code)]

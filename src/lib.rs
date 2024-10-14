@@ -59,11 +59,11 @@ pub extern "C" fn kernel_main() -> ! {
     };
 
     writer.clear_screen();
-
-    writer.set_color(Color::Black, Color::Pink);
+    writer.set_fg(Color::Pink);
     writer.println("HUMMUS OS :3");
-    writer.set_color(Color::Black, Color::DarkGray);
+    writer.set_fg(Color::DarkGray);
     writer.println("Harder to install than Arch Linux! ;)");
+    writer.set_fg(Color::White);
 
     writer.print_status(Status::OK, "Kernel loaded successfully!");
     writer.print_status(Status::INFO, "Did you know hummus is yummy?");
